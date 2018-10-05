@@ -105,6 +105,10 @@ export default class ModalPicker extends BaseComponent {
       });
     }
 
+    clear() {
+        this.setState({selected: this.props.initValue});
+    }
+
     renderSection(section) {
         return (
             <View key={section.key} style={[styles.sectionStyle,this.props.sectionStyle]}>
