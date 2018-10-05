@@ -10,6 +10,7 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     Platform
 } from 'react-native';
 
@@ -26,6 +27,7 @@ const propTypes = {
     selectStyle: View.propTypes.style,
     optionStyle: View.propTypes.style,
     optionTextStyle: Text.propTypes.style,
+    disabledOptionTextStyle: Text.propTypes.style,
     sectionStyle: View.propTypes.style,
     sectionTextStyle: Text.propTypes.style,
     cancelStyle: View.propTypes.style,
@@ -42,6 +44,7 @@ const defaultProps = {
     selectStyle: {},
     optionStyle: {},
     optionTextStyle: {},
+    disabledOptionTextStyle: {},
     sectionStyle: {},
     sectionTextStyle: {},
     cancelStyle: {},
@@ -83,10 +86,11 @@ export default class ModalPicker extends BaseComponent {
     }
 
     onChange(item) {
-        if (item.disabled) return;
-        this.props.onChange(item);
-        this.setState({selected: item.label});
-        this.close();
+        if (item.enabled) {
+            this.props.onChange(item);
+            this.setState({selected: item.label});
+            this.close();
+        }
     }
 
     close() {
@@ -110,12 +114,17 @@ export default class ModalPicker extends BaseComponent {
     }
 
     renderOption(option) {
+        const {optionTextStyle, disabledOptionTextStyle} = this.props;
+        const ButtonClass = option.enabled ? TouchableOpacity : TouchableWithoutFeedback;
         return (
-            <TouchableOpacity key={option.key} onPress={()=>this.onChange(option)}>
+            <ButtonClass key={option.key} onPress={()=>this.onChange(option)}>
                 <View style={[styles.optionStyle, this.props.optionStyle]}>
-                    <Text style={[styles.optionTextStyle,this.props.optionTextStyle]}>{option.label}</Text>
+                    <Text style={[styles.optionTextStyle, option.enabled ? optionTextStyle : disabledOptionTextStyle]}>
+                        {option.label}
+                    </Text>
                 </View>
-            </TouchableOpacity>)
+            </ButtonClass>
+        )
     }
 
     renderOptionList() {
