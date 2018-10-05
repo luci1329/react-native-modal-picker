@@ -21,6 +21,7 @@ let componentIndex = 0;
 
 const propTypes = {
     data: PropTypes.array,
+    enabled: PropTypes.bool,
     onChange: PropTypes.func,
     initValue: PropTypes.string,
     style: View.propTypes.style,
@@ -38,6 +39,7 @@ const propTypes = {
 
 const defaultProps = {
     data: [],
+    enabled: true,
     onChange: ()=> {},
     initValue: 'Select me!',
     style: {},
@@ -143,7 +145,7 @@ export default class ModalPicker extends BaseComponent {
         return (
             <View style={[styles.overlayStyle, this.props.overlayStyle]} key={'modalPicker'+(componentIndex++)}>
                 <View style={styles.optionContainer}>
-                    <ScrollView keyboardShouldPersistTaps>
+                    <ScrollView keyboardShouldPersistTaps="always">
                         <View style={{paddingHorizontal:10}}>
                             {options}
                         </View>
@@ -180,12 +182,15 @@ export default class ModalPicker extends BaseComponent {
           </Modal>
         );
 
+        const { enabled, style } = this.props;
+        const ButtonClass = enabled ? TouchableOpacity : TouchableWithoutFeedback;
+
         return (
-            <View style={this.props.style}>
+            <View style={style}>
                 {dp}
-                <TouchableOpacity onPress={this.open}>
+                <ButtonClass onPress={enabled ? this.open : null}>
                     {this.renderChildren()}
-                </TouchableOpacity>
+                </ButtonClass>
             </View>
         );
     }
